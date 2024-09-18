@@ -10,12 +10,32 @@ from langchain_openai import ChatOpenAI
 # from toddgpt.parsers.terachem import TerachemParser
 # # from toddgpt.tools.interface import Interface
 from .prompt import SYSTEM_PROMPT
+
 # from toddgpt.tools.geom_reporter import GeomReporter
-# from toddgpt.tools.interface import extract_molecule_from_pubchem
+from .tools.grab_geom import extract_molecule_from_pubchem, read_geometry_from_file
 from .tools.chemcloud_tool import RunTerachem
+from .tools.mace_calc import MaceCalculator
+from langchain_core.messages import AIMessage
+from langchain_core.runnables import Runnable
+import json
 
 # from langchain_community.tools import MoveFileTool
 # from langchain_core.tools import MoveFileTool
+
+
+def human_approval(msg: AIMessage) -> Runnable:
+    tool_strs = "\n\n".join(
+        json.dumps(tool_call, indent=2) for tool_call in msg.tool_calls
+    )
+    input_msg = (
+        f"Do you approve of the following tool invocations?\n\n"
+        f"{tool_strs}\n\n"
+        "Please respond with 'Y'/'Yes' to approve, or anything else to reject."
+    )
+    resp = input(input_msg)
+    if resp.lower() not in ("yes", "y"):
+        raise ValueError(f"Tool invocations not approved:\n\n{tool_strs}")
+    return msg
 
 
 class Agent:
@@ -69,12 +89,12 @@ class Agent:
         # ]
         tools = [
             # get_distances,
-            # read_geometry_from_file,
-            # extract_molecule_from_pubchem,
+            read_geometry_from_file,
+            extract_molecule_from_pubchem,
             # # setup_terachem_input,
-            # RunTerachem(),
+            RunTerachem(),
             # TerachemParser(),
-            # MaceCalculator(),
+            MaceCalculator(),
             # GeomReporter(),
             # initialize_chemcloud_client,
             # run_terachem,
@@ -90,6 +110,7 @@ class Agent:
             }
             | prompt
             | llm_with_tools
+            | human_approval
             | OpenAIToolsAgentOutputParser()
         )
         return AgentExecutor(agent=agent, tools=tools, verbose=True)
