@@ -1,0 +1,37 @@
+[project]
+name = "demo-toddgpt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "ase>=3.23.0",
+    "isort>=5.13.2",
+    "langchain>=0.3.0",
+    "langchain-core>=0.3.1",
+    "langchain-openai>=0.2.0",
+    "mypy>=1.11.2",
+    "openai>=1.46.0",
+    "pre-commit>=3.8.0",
+    "pytest>=8.3.3",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.5",
+    "types-requests>=2.32.0.20240914",
+    "mace-torch>=0.3.6",
+    "paper-qa>=5.0.4",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "chemcloud",
+    "qcio",
+    "qcop",
+    "qcparse",
+]
+
+[tool.uv.sources]
+chemcloud = { path = "../chemcloud-client" }
+qcparse = { path = "../qcparse" }
+qcio = { path = "../qcio" }
+qcop = { path = "../qcop" }
+
