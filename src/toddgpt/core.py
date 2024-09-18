@@ -12,7 +12,7 @@ from langchain_openai import ChatOpenAI
 from .prompt import SYSTEM_PROMPT
 # from toddgpt.tools.geom_reporter import GeomReporter
 # from toddgpt.tools.interface import extract_molecule_from_pubchem
-# from toddgpt.tools.terachem import RunTerachem
+from .tools.chemcloud_tool import RunTerachem
 
 # from langchain_community.tools import MoveFileTool
 # from langchain_core.tools import MoveFileTool
