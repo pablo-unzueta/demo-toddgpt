@@ -123,13 +123,21 @@ ATOMIC_SYMBOLS = [
     "Og",
 ]
 
+ORGANIC_SYMBOLS = ["C", "H", "O", "N"]
 
 class AtomsDict(BaseModel):
     numbers: List[int]
     positions: List[List[float]]
     symbols: Optional[List[str]] = None
-
+    organic: Optional[bool] = None
     def __init__(self, **data):
         super().__init__(**data)
         if self.symbols is None:
             self.symbols = [ATOMIC_SYMBOLS[num - 1] for num in self.numbers]
+            self.organic = self.is_organic()
+
+    def is_organic(self) -> bool:
+        if self.symbols is None:
+            return False
+        else:
+            return set(self.symbols) == set(ORGANIC_SYMBOLS)
