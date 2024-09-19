@@ -1,5 +1,5 @@
 import os
-
+from pathlib import Path
 import numpy as np
 
 # print(f"Python path: {sys.path}")
@@ -21,6 +21,32 @@ except ImportError as e:
     print(f"Import error: {e}")
 
 from typing import Optional, Type
+
+
+class JobDescription(BaseModel):
+    job_name: str
+    job_description: str
+
+
+class FindJobExample(BaseTool):
+    name: str = "find_job_example"
+    description: str = (
+        "Use this tool to find a similar tc_input file to pass to RunTerachem tool."
+    )
+    args_schema: Type[BaseModel] = JobDescription
+
+    def _run(self, job_name: str) -> str:
+        return self.find_job_example(job_name)
+
+    def find_job_example(self, job_name: str) -> Optional[str]:
+        example_dir = Path("src/toddgpt/tools/example_inputs")
+        for dir in example_dir.iterdir():
+            if dir.is_dir() and dir.stem == job_name:
+                example_file = dir / "tc_input"
+                if example_file.exists():
+                    with open(example_file, 'r') as f:
+                        return f.read()
+        raise ValueError(f"No example input found for job {job_name}")
 
 
 class TerachemInput(BaseModel):
