@@ -1,4 +1,7 @@
-input_examples.py
+scratch/
+old_scratch/
+old_old_scratch/
+agent_scratch/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
