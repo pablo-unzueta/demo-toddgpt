@@ -1,0 +1,7 @@
+run          initcond
+basis        def2-svp
+method       wb97xd3
+charge       0
+spinmult     1
+
+coordinates  geom.xyz
