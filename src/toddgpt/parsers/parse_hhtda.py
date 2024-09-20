@@ -45,7 +45,7 @@ def get_uv_vis_data(file: Union[str, Path]):
     energy_data = extract_energy_data(file)
     uv_vis_data = []
     for excited_state in energy_data[1:]:
-        uv_vis_data.append([excited_state[4], excited_state[5]])
+        uv_vis_data.append([excited_state[2], excited_state[5]])
     return uv_vis_data
 
 
