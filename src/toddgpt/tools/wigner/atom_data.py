@@ -1,4 +1,4 @@
-import units
+from . import units
 
 """
     Contains three dictionaries:

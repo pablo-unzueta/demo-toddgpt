@@ -1,6 +1,6 @@
 import numpy as np
-import units
-import atom_data
+from . import units
+from . import atom_data
 import re
 
 # => XYZ File Utility <= #
