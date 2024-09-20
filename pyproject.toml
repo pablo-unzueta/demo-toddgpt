@@ -19,19 +19,15 @@ dependencies = [
     "types-requests>=2.32.0.20240914",
     "mace-torch>=0.3.6",
     "paper-qa>=5.0.4",
+    "langchain-community>=0.3.0",
+    "chemcloud>=0.12.1",
+    "qcio>=0.11.9",
+    "qcop>=0.9.1",
+    "qcparse>=0.6.3",
 ]
 
 [tool.uv]
-dev-dependencies = [
-    "chemcloud",
-    "qcio",
-    "qcop",
-    "qcparse",
-]
+dev-dependencies = []
 
 [tool.uv.sources]
-chemcloud = { path = "../chemcloud-client" }
-qcparse = { path = "../qcparse" }
-qcio = { path = "../qcio" }
-qcop = { path = "../qcop" }
 

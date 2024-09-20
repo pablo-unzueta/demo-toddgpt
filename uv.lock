@@ -193,8 +193,8 @@ wheels = [
 
 [[package]]
 name = "chemcloud"
-version = "0.12.0"
-source = { directory = "../chemcloud-client" }
+version = "0.12.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
@@ -202,15 +202,9 @@ dependencies = [
     { name = "qcio" },
     { name = "tomli-w" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpx", specifier = ">=0.27,<0.28" },
-    { name = "pydantic", specifier = ">=2.0.0,!=2.4.0" },
-    { name = "pydantic-settings", specifier = ">=2.0.3,<3.0.0" },
-    { name = "qcio", directory = "../qcio" },
-    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0,<3.0" },
-    { name = "tomli-w", specifier = ">=1.0.0,<2.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/47/78/41ae01813769ab5910677d6becc81fd93105bafc5851692cd38e3cd35759/chemcloud-0.12.1.tar.gz", hash = "sha256:2a860b42afe2d85cdc5dab9148cb36a2710ea4e40dd1356c078995016333a230", size = 13926 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6a/02/720d6ca1a38f51441df060432536e5b1273cf632ec3208c676370b7096a8/chemcloud-0.12.1-py3-none-any.whl", hash = "sha256:6279ff9ea1c766e301f078b5d3024ed86f1c0ec078a985001317bdfdba24110b", size = 13720 },
 ]
 
 [[package]]
@@ -355,13 +349,28 @@ wheels = [
 ]
 
 [[package]]
+name = "dataclasses-json"
+version = "0.6.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "marshmallow" },
+    { name = "typing-inspect" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/64/a4/f71d9cf3a5ac257c993b5ca3f93df5f7fb395c725e7f1e6479d2514173c3/dataclasses_json-0.6.7.tar.gz", hash = "sha256:b6b3e528266ea45b9535223bc53ca645f5208833c29229e847b3f26a1cc55fc0", size = 32227 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/be/d0d44e092656fe7a06b55e6103cbce807cdbdee17884a5367c68c9860853/dataclasses_json-0.6.7-py3-none-any.whl", hash = "sha256:0dbf33f26c8d5305befd61b39d2b3414e8a407bedc2834dea9b8d642666fb40a", size = 28686 },
+]
+
+[[package]]
 name = "demo-toddgpt"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "ase" },
+    { name = "chemcloud" },
     { name = "isort" },
     { name = "langchain" },
+    { name = "langchain-community" },
     { name = "langchain-core" },
     { name = "langchain-openai" },
     { name = "mace-torch" },
@@ -371,23 +380,20 @@ dependencies = [
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "types-requests" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "chemcloud" },
     { name = "qcio" },
     { name = "qcop" },
     { name = "qcparse" },
+    { name = "ruff" },
+    { name = "types-requests" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "ase", specifier = ">=3.23.0" },
+    { name = "chemcloud", specifier = ">=0.12.1" },
     { name = "isort", specifier = ">=5.13.2" },
     { name = "langchain", specifier = ">=0.3.0" },
+    { name = "langchain-community", specifier = ">=0.3.0" },
     { name = "langchain-core", specifier = ">=0.3.1" },
     { name = "langchain-openai", specifier = ">=0.2.0" },
     { name = "mace-torch", specifier = ">=0.3.6" },
@@ -397,16 +403,11 @@ requires-dist = [
     { name = "pre-commit", specifier = ">=3.8.0" },
     { name = "pytest", specifier = ">=8.3.3" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
+    { name = "qcio", specifier = ">=0.11.9" },
+    { name = "qcop", specifier = ">=0.9.1" },
+    { name = "qcparse", specifier = ">=0.6.3" },
     { name = "ruff", specifier = ">=0.6.5" },
     { name = "types-requests", specifier = ">=2.32.0.20240914" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "chemcloud", directory = "../chemcloud-client" },
-    { name = "qcio", directory = "../qcio" },
-    { name = "qcop", directory = "../qcop" },
-    { name = "qcparse", directory = "../qcparse" },
 ]
 
 [[package]]
@@ -910,6 +911,28 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-community"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "dataclasses-json" },
+    { name = "langchain" },
+    { name = "langchain-core" },
+    { name = "langsmith" },
+    { name = "numpy" },
+    { name = "pydantic-settings" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "sqlalchemy" },
+    { name = "tenacity" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/c8/6ecc070a51eaaca3a1b764ab97995238696cee874af5f8c8691989129ac7/langchain_community-0.3.0.tar.gz", hash = "sha256:1ee8a469ad66977f21b9d96bdcdd8549c5281c474f0f9cc13b932efd63a78105", size = 1591569 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/3d/a30549f1c5fa023b833a81eab43f99d6f603bed5ecfaef175f53e7166dbf/langchain_community-0.3.0-py3-none-any.whl", hash = "sha256:40084f1f785f0fb56c8698ff059bbda8bd8c683cbdffa7902a0e04e72961496c", size = 2346560 },
+]
+
+[[package]]
 name = "langchain-core"
 version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1078,6 +1101,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/88/07/2dc76aa51b481eb96a4c3198894f38b480490e834479611a4053fbf08623/MarkupSafe-2.1.5-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:58c98fee265677f63a4385256a6d7683ab1832f3ddd1e66fe948d5880c21a169", size = 33038 },
     { url = "https://files.pythonhosted.org/packages/96/0c/620c1fb3661858c0e37eb3cbffd8c6f732a67cd97296f725789679801b31/MarkupSafe-2.1.5-cp312-cp312-win32.whl", hash = "sha256:8590b4ae07a35970728874632fed7bd57b26b0102df2d2b233b6d9d82f6c62ad", size = 16572 },
     { url = "https://files.pythonhosted.org/packages/3f/14/c3554d512d5f9100a95e737502f4a2323a1959f6d0d01e0d0997b35f7b10/MarkupSafe-2.1.5-cp312-cp312-win_amd64.whl", hash = "sha256:823b65d8706e32ad2df51ed89496147a42a2a6e01c13cfb6ffb8b1e92bc910bb", size = 17127 },
+]
+
+[[package]]
+name = "marshmallow"
+version = "3.22.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/70/40/faa10dc4500bca85f41ca9d8cefab282dd23d0fcc7a9b5fab40691e72e76/marshmallow-3.22.0.tar.gz", hash = "sha256:4972f529104a220bb8637d595aa4c9762afbe7f7a77d82dc58c1615d70c5823e", size = 176836 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/78/c1de55eb3311f2c200a8b91724414b8d6f5ae78891c15d9d936ea43c3dba/marshmallow-3.22.0-py3-none-any.whl", hash = "sha256:71a2dce49ef901c3f97ed296ae5051135fd3febd2bf43afe0ae9a82143a494d9", size = 49334 },
 ]
 
 [[package]]
@@ -1879,7 +1914,7 @@ wheels = [
 [[package]]
 name = "qcio"
 version = "0.11.9"
-source = { directory = "../qcio" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
     { name = "pydantic" },
@@ -1887,57 +1922,37 @@ dependencies = [
     { name = "toml" },
     { name = "typing-extensions" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "ipython", marker = "extra == 'all' or extra == 'view'", specifier = ">=8.0.0" },
-    { name = "matplotlib", marker = "extra == 'all' or extra == 'view'", specifier = ">=3.0.0" },
-    { name = "numpy", specifier = ">=1.20,<2.0" },
-    { name = "openbabel-wheel", marker = "extra == 'all' or extra == 'openbabel'", specifier = ">=3.1.1.19,<4.0.0.0" },
-    { name = "py3dmol", marker = "extra == 'all' or extra == 'view'", specifier = ">=2.2.1" },
-    { name = "pydantic", specifier = ">=2.0.0,!=2.0.1,!=2.1.0,<3.0.0" },
-    { name = "pyyaml", specifier = ">=6.0,<7.0" },
-    { name = "rdkit", marker = "extra == 'all' or extra == 'rdkit' or extra == 'view'", specifier = ">=2022.3.3" },
-    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
-    { name = "typing-extensions", specifier = ">=4.7.1,<5.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/d6/5e/f4f81f9284801bf475bae988b4e6adb76de8e4c6c7cb01bde8a1d348c2aa/qcio-0.11.9.tar.gz", hash = "sha256:3ce4c78a2b828c193e6c6a38b74f2009fcdc2bb378c84d4ad09570c52bb8737c", size = 41434 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/80/3c/6f25771ab2386823cdc82d18ec0941fbea4bf7a1f150aefba1680300382a/qcio-0.11.9-py3-none-any.whl", hash = "sha256:18237ca52d03fb7af3593150d448feeadc5b96ea58b2ff77efcb517f91842a33", size = 43513 },
 ]
 
 [[package]]
 name = "qcop"
-version = "0.8.1"
-source = { directory = "../qcop" }
+version = "0.9.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "qcio" },
     { name = "qcparse" },
     { name = "tomli-w" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "geometric", marker = "extra == 'all' or extra == 'geometric'", specifier = ">=1.0.1,<2.0.0" },
-    { name = "qcelemental", marker = "extra == 'all' or extra == 'qcengine'", specifier = ">=0.26.0,<0.27.0" },
-    { name = "qcengine", marker = "extra == 'all' or extra == 'qcengine'", specifier = ">=0.27.0,<0.28.0" },
-    { name = "qcio", directory = "../qcio" },
-    { name = "qcparse", directory = "../qcparse" },
-    { name = "tomli-w", specifier = ">=1.0.0,<2.0.0" },
-    { name = "xtb", marker = "extra == 'all' or extra == 'xtb'", specifier = ">=22.1,<23.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/f0/b0/c6a3eb9fe26c7d231ca57a887816946b73c9b09d19d631346d2e49845255/qcop-0.9.1.tar.gz", hash = "sha256:4a3a3b8a514f135e1213331edb4f0243356720fa7bc22953206cf40263255e37", size = 24443 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/13/7c/c8cce90fc15187f9050ef5c3451133152655f3ded20d0e5078a16bc0cc4d/qcop-0.9.1-py3-none-any.whl", hash = "sha256:adf287bf84d26de3829c81f332ad0183379d4036a3e4d5a322ec8b0b0cda198e", size = 29025 },
 ]
 
 [[package]]
 name = "qcparse"
-version = "0.6.2"
-source = { directory = "../qcparse" }
+version = "0.6.3"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "qcio" },
     { name = "tomli-w" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "pydantic", specifier = ">=2.0.0" },
-    { name = "qcio", directory = "../qcio" },
-    { name = "tomli-w", specifier = ">=1.0.0,<2.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/ed/7c/b2723c4e52acf3d745668c25c8087ed8fcfeef2bdd6cc1e950738ddc0bc7/qcparse-0.6.3.tar.gz", hash = "sha256:c29eee4e6481fd5af2c45ec413d5ad45a69aacb6c6dbed9a46291fcf6aa1a763", size = 13477 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7c/ad/6dd2c2939159f0eb90c2e3b3dbcd049b23ac2473e081b841c7022714b495/qcparse-0.6.3-py3-none-any.whl", hash = "sha256:b568c312ad5f96372b0fc2b1855a50e2eca911bc5793c1ecc863893be789e376", size = 16396 },
 ]
 
 [[package]]
@@ -2438,6 +2453,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8", size = 85321 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/26/9f/ad63fc0248c5379346306f8668cda6e2e2e9c95e01216d2b8ffd9ff037d0/typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d", size = 37438 },
+]
+
+[[package]]
+name = "typing-inspect"
+version = "0.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mypy-extensions" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/dc/74/1789779d91f1961fa9438e9a8710cdae6bd138c80d7303996933d117264a/typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78", size = 13825 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/65/f3/107a22063bf27bdccf2024833d3445f4eea42b2e598abfbd46f6a63b6cb0/typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f", size = 8827 },
 ]
 
 [[package]]
