@@ -1,6 +1,5 @@
 {
     "conventionalCommits.scopes": [
-        "apik",
         "api"
     ]
 }
