@@ -1,8 +1,9 @@
-from src.toddgpt.tools.spectra import GenerateSpectrum
+from src.toddgpt.tools.spectra import GenerateSpectrum, CheckGeneratedSpectra
 from src.toddgpt.tools.chemcloud_tool import RunTerachem, FindJobExample
 from src.toddgpt.tools.datatypes import AtomsDict
 import pytest
 from pathlib import Path
+import json
 
 cb_atoms_dict = AtomsDict(
     numbers=[6, 6, 6, 1, 1, 6, 8, 1, 1, 1, 1],
@@ -36,4 +37,15 @@ def test_run_td_dft(atoms_dict):
 
 def test_plot_spectra():
     tool = GenerateSpectrum()
-    tool.plot_spectra(Path("./scratch/spectra/hhtda"))
+    uv_vis_data = tool.plot_spectra(
+        Path("/Users/pablo/software/demo-toddgpt/scratch/hhtda")
+    )
+    print(uv_vis_data)
+
+
+def test_check_generated_spectra():
+    tool = CheckGeneratedSpectra()
+    response = tool._run(
+        Path("/Users/pablo/software/demo-toddgpt/scratch/spectra/hhtda.png")
+    )
+    print(response)

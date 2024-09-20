@@ -8,7 +8,13 @@ from ase.io import read
 import os
 from .wigner.wigner import run_wigner
 import logging
-from src.toddgpt.parsers.parse_hhtda import get_uv_vis_data
+from src.toddgpt.parsers.parse_hhtda import get_uv_vis_data as get_uv_vis_data_hhtda
+from src.toddgpt.parsers.parse_wpbe import get_uv_vis_data as get_uv_vis_data_wpbe
+import numpy as np
+import matplotlib.pyplot as plt
+import base64
+import requests
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -88,7 +94,8 @@ class RunTDDFTInput(BaseModel):
 class RunTDDFT(BaseTool):
     name: str = "run_td_dft"
     description: str = (
-        "Use this tool to run a TD-DFT calculation, only after using run_hessian."
+        "Use this tool to run a TD-DFT calculation, only after using run_hessian. "
+        "Requires two separate inputs: 'atoms_dict' (an AtomsDict object) and 'method' (a string)."
     )
     args_schema: Type[BaseModel] = RunTDDFTInput
 
@@ -118,7 +125,6 @@ class RunTDDFT(BaseTool):
 
 
 class SpectraInput(BaseModel):
-    td_dft_dir: Path
     method: str
 
 
@@ -127,19 +133,137 @@ class GenerateSpectrum(BaseTool):
     description: str = "Use this tool to generate a UV-Vis spectrum after using optimize_molecule_for_spectrum, run_hessian, and run_td_dft."
     args_schema: Type[BaseModel] = SpectraInput
 
-    def _run(self, td_dft_dir: Path, method: str):
+    def _run(self, method: str):
         logging.info(f"Generating spectrum for {method}")
-        logging.info(f"Reading files from {td_dft_dir}")
-        logging.info(f"Writing output to ./scratch/spectra/{method}")
-        spectra_dir = Path(f"./scratch/spectra/{method}")
-        spectra_dir.mkdir(parents=True, exist_ok=True)
-        self.plot_spectra(td_dft_dir)
+        logging.info(f"Reading files from ./scratch/{method}")
+        logging.info(f"Writing output to ./scratch/spectra/{method}.png")
+        self.plot_spectra(method)
+        return f"Generated spectra can be viewed at ./scratch/spectra/{method}.png"
 
-    def plot_spectra(self, td_dft_dir: Path):
-        logging.info(f"Plotting spectrum for {td_dft_dir}")
+    def plot_spectra(self, method: str):
+        logging.info(f"Plotting spectrum for {method}")
+        spectra_dir = Path("./scratch/spectra")
+        spectra_dir.mkdir(parents=True, exist_ok=True)
         uv_vis_data = []
-        for file in td_dft_dir.glob("*.out"):
-            data = get_uv_vis_data(file)
-            uv_vis_data.append([data])
-        print(uv_vis_data)
-        logging.info(f"UV-Vis data: {uv_vis_data}")
+        for file in Path(f"./scratch/{method}").glob("*.out"):
+            if method == "hhtda":
+                data = get_uv_vis_data_hhtda(file)
+            elif method == "wpbe":
+                data = get_uv_vis_data_wpbe(file)
+            uv_vis_data.extend(data)
+
+        uv_vis_data = np.array(
+            uv_vis_data
+        )  # first column is wavelengths, second is osc strength
+        energy_data = uv_vis_data[:, 0]
+        osc_strength_data = uv_vis_data[:, 1]
+        osc_strength_data /= osc_strength_data.max()
+
+        grid = np.linspace(100, 350, 551)
+        self.spectrum(energy_data, osc_strength_data, grid, plot_label=method)
+
+    def gaussian(self, x, x0, sigma):
+        return np.exp(-((x - x0) ** 2) / (2 * sigma**2)) / (sigma * np.sqrt(2 * np.pi))
+
+    def spectrum(self, energy, osc_strength, grid, plot_label):
+        output = np.zeros(len(grid))
+        for i, en in enumerate(energy):
+            gauss = self.gaussian(
+                grid, 1240 / en, 5
+            )  # Use wavelength instead of energy
+            output += gauss * osc_strength[i]
+
+        plt.plot(grid, output, linewidth=3, label=plot_label)
+        plt.xlabel("Wavelength (nm)")
+        plt.ylabel("Intensity")
+        plt.title(f"UV-Vis Spectrum - {plot_label}")
+        plt.legend()
+        plt.savefig(f"./scratch/spectra/{plot_label}.png")
+        plt.close()
+
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+
+class WavelengthResponse(BaseModel):
+    wavelength: float
+
+
+class CheckGeneratedSpectraInput(BaseModel):
+    path: str
+
+
+class CheckGeneratedSpectra(BaseTool):
+    name: str = "check_generated_spectra"
+    description: str = "Use this tool to analyze an UV-Vis spectrum and find the wavelength of the maximum absorbance."
+    args_schema: Type[BaseModel] = CheckGeneratedSpectraInput
+
+    def _run(self, path: str):
+        # Load the image from the path or URL
+        if isinstance(path, str):
+            base64_image = encode_image(path)  # Encode the image to base64
+
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+            }
+
+            payload = {
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "What is the wavelength of the maximum absorbance?",
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{base64_image}"
+                                },
+                            },
+                        ],
+                    }
+                ],
+                "max_tokens": 4096,
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "steps": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "output": {"type": "number"},
+                                        },
+                                        "required": ["output"],
+                                        "additionalProperties": False,
+                                    },
+                                },
+                                "final_answer": {"type": "string"},
+                            },
+                            "required": ["steps", "final_answer"],
+                            "additionalProperties": False,
+                        },
+                        "strict": True,
+                    },
+                },
+            }
+
+            response = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers=headers,
+                json=payload,
+            )
+            return response.json()
+            # content = json.loads(response.json()["choices"][0]["message"]["content"])
+            # return content
+            # return f"Generated Spectra has a lambda max at {content['steps'][0]['output']} nm"
