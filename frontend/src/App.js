@@ -22,7 +22,15 @@ function App() {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/query', { query: userInput });
-      setMessages([...newMessages, { sender: 'bot', text: response.data.response }]);
+      const { response: textResponse, html } = response.data;
+      
+      const updatedMessages = [...newMessages, { sender: 'bot', text: textResponse }];
+      
+      if (html) {
+        updatedMessages.push({ sender: 'bot', html: html });
+      }
+      
+      setMessages(updatedMessages);
     } catch (error) {
       console.error('Error querying the server:', error);
       setMessages([...newMessages, { sender: 'bot', text: 'An error occurred.' }]);
@@ -45,7 +53,10 @@ function App() {
       <div className="chat-box">
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.sender}`}>
-            <div className="message-text">{msg.text}</div>
+            {msg.text && <div className="message-text">{msg.text}</div>}
+            {msg.html && (
+              <div className="message-html" dangerouslySetInnerHTML={{ __html: msg.html }} />
+            )}
           </div>
         ))}
       </div>

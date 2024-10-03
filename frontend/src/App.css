@@ -24,6 +24,7 @@
 .chat-title {
   font-size: 32px;
   color: #333;
+  font-weight: 600;
 }
 
 .chat-box {
@@ -90,4 +91,12 @@
 
 .send-button:hover {
   background-color: #a8d29e;
+}
+
+.message-html {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 5px;
+  overflow-x: auto;
 }
