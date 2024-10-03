@@ -29,6 +29,13 @@ function App() {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="chat-container">
       <header className="chat-header">
@@ -47,6 +54,7 @@ function App() {
           type="text"
           value={userInput}
           onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
           placeholder="Type your message..."
           className="chat-input"
         />

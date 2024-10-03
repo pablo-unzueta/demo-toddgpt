@@ -22,7 +22,7 @@
 }
 
 .chat-title {
-  font-size: 36px;
+  font-size: 32px;
   color: #333;
 }
 
@@ -31,7 +31,7 @@
   height: 80%;
   overflow-y: auto;
   background-color: #ffffff;
-  padding: 10px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
@@ -55,7 +55,7 @@
   padding: 10px;
   border-radius: 8px;
   background-color: #e0e0e0;
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .chat-message.user .message-text {
@@ -75,7 +75,7 @@
   border-radius: 20px;
   border: 1px solid #ccc;
   margin-right: 10px;
-  font-size: 16px;
+  font-size: 22px;
 }
 
 .send-button {
@@ -85,7 +85,7 @@
   background-color: #ccebc5;
   color: black;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 22px;
 }
 
 .send-button:hover {
