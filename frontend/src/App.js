@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import './App.css';  // For styling
 
 function App() {
@@ -39,18 +40,21 @@ function App() {
   };
 
   return (
-    <div className="chat-container">
+    <div className="App">
       <header className="chat-header">
         <img src={process.env.PUBLIC_URL + '/logo.png'} alt="ToddGPT Logo" className="chat-logo" />
         <h1 className="chat-title">ToddGPT</h1>
       </header>
-      <div className="chat-box">
-        {messages.map((msg, index) => (
-          <div key={index} className={`chat-message ${msg.sender}`}>
-            {msg.text && <div className="message-text">{msg.text}</div>}
-            {msg.html && (
-              <div className="message-html" dangerouslySetInnerHTML={{ __html: msg.html }} />
-            )}
+      <div className="chat-container">
+        {messages.map((message, index) => (
+          <div key={index} className={`chat-message ${message.sender}`}>
+            <div className="message-text">
+              {message.sender === 'user' ? (
+                <p>{message.text}</p>
+              ) : (
+                <ReactMarkdown>{message.text}</ReactMarkdown>
+              )}
+            </div>
           </div>
         ))}
       </div>
