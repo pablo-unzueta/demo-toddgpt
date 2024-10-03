@@ -124,3 +124,40 @@ class RunTerachem(BaseTool):
                 raise ValueError("CHEMCLOUD_USER environment variable not set.")
 
         return self._chemcloud_client
+
+
+class UpdateTerachemInput(BaseModel):
+    tc_input: str
+    updated_params: str
+
+
+# TODO: START HERE
+class UpdateTerachem(BaseTool):
+    name: str = "update_terachem_input"
+    description: str = "Use this tool to update the terachem input file."
+    args_schema: Type[BaseModel] = UpdateTerachemInput
+
+    def _run(self, tc_input: str, updated_params: str) -> str:
+        return self.update_terachem_input(tc_input, updated_params)
+
+    def update_terachem_input(self, tc_input: str, updated_params: str) -> str:
+        """
+        Useful for updating the terachem input file.
+        """
+        lines = tc_input.splitlines()
+        best_match = None
+        highest_similarity = 0
+
+        for line in lines:
+            similarity = self.calculate_similarity(line.split()[0], updated_params)
+            if similarity > highest_similarity:
+                highest_similarity = similarity
+                best_match = line
+
+        return best_match if best_match else "No match found."
+
+    def calculate_similarity(self, line: str, updated_params: str) -> float:
+        # Simple similarity measure (can be improved)
+        return len(set(line.split()) & set(updated_params.split())) / len(
+            set(updated_params.split())
+        )

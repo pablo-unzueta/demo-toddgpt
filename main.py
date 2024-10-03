@@ -16,10 +16,12 @@ def main():
 
     while True:
         # Get the question from the user
-        conversation = input("Please enter your question (or 'exit' to quit): ")
+        # conversation = input("Please enter your question (or 'exit' to quit): ")
         # conversation = "Can you help me run a terachem tddft_single_point job on ethylene? "
         # conversation = "What are the major geometric changes after optimizing water? "
         # conversation = "What are the major geometric changes after optimizing glucose? Write the results to a file."
+        # conversation = "Can you optimize cyclobutanone with terachem?"
+        conversation = "Can you generate a UV-Vis spectrum for cyclobutanone? Compare it to the experimental spectra."
 
         if conversation.lower() == "exit":
             print("Exiting ToddGPT. Goodbye!")

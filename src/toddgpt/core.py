@@ -15,6 +15,16 @@ from .prompt import SYSTEM_PROMPT
 from .tools.grab_geom import extract_molecule_from_pubchem, read_geometry_from_file
 from .tools.chemcloud_tool import RunTerachem
 from .tools.mace_calc import MaceCalculator
+from .tools.spectra import (
+    GenerateSpectrum,
+    OptimizeMolecule,
+    RunHessian,
+    RunTDDFT,
+    CheckGeneratedSpectra,
+)
+from .tools.experimental_data import MaxWavelengthTool
+from .tools.update_tc_input import UpdateTcInput
+from .tools.search_lit import SearchLit
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 import json
@@ -29,7 +39,7 @@ def human_approval(msg: AIMessage) -> Runnable:
     )
     input_msg = (
         f"Do you approve of the following tool invocations?\n\n"
-        f"{tool_strs}\n\n"
+        f"{', '.join(tool_call['name'] for tool_call in msg.tool_calls)}\n\n"
         "Please respond with 'Y'/'Yes' to approve, or anything else to reject."
     )
     resp = input(input_msg)
@@ -44,7 +54,7 @@ class Agent:
         api_provider,
         api_key,
         api_url=None,
-        api_model="gpt-4o-mini",
+        api_model="gpt-4o-2024-08-06",
         api_temperature=0,
     ):
         self.api_provider = api_provider
@@ -55,7 +65,7 @@ class Agent:
 
     def get_executor(self):
         if self.api_provider.lower() == "openai":
-            supported_models = ["gpt-4", "gpt-4o-mini"]
+            supported_models = ["gpt-4o-2024-08-06", "gpt-4o-mini", "gpt-4o"]
             if self.api_model not in supported_models:
                 raise ValueError(
                     f"Unsupported OpenAI model: {self.api_model}. Supported models are: {', '.join(supported_models)}"
@@ -88,17 +98,18 @@ class Agent:
         #     setup_terachem_input,
         # ]
         tools = [
-            # get_distances,
-            read_geometry_from_file,
+            # read_geometry_from_file,
             extract_molecule_from_pubchem,
-            # # setup_terachem_input,
             RunTerachem(),
-            # TerachemParser(),
             MaceCalculator(),
-            # GeomReporter(),
-            # initialize_chemcloud_client,
-            # run_terachem,
-            # MoveFileTool(),
+            OptimizeMolecule(),
+            RunHessian(),
+            RunTDDFT(),
+            GenerateSpectrum(),
+            CheckGeneratedSpectra(),
+            MaxWavelengthTool(),
+            SearchLit(),
+            UpdateTcInput(),
         ]
         llm_with_tools = llm.bind_tools(tools)
         agent = (
@@ -110,7 +121,19 @@ class Agent:
             }
             | prompt
             | llm_with_tools
-            | human_approval
             | OpenAIToolsAgentOutputParser()
         )
+        # return AgentExecutor(agent=agent, tools=tools, verbose=True)
+        # agent = (
+        #     {
+        #         "conversation": lambda x: x["conversation"],
+        #         "agent_scratchpad": lambda x: format_to_openai_tool_messages(
+        #             x["intermediate_steps"]
+        #         ),
+        #     }
+        #     | prompt
+        #     | llm_with_tools
+        #     | human_approval
+        #     | OpenAIToolsAgentOutputParser()
+        # )
         return AgentExecutor(agent=agent, tools=tools, verbose=True)

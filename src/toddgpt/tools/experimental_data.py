@@ -23,7 +23,7 @@ class WavelengthResponse(BaseModel):
 class MaxWavelengthTool(BaseTool):
     name: str = "max_wavelength_tool"
     description: str = (
-        "Use this tool to find the wavelength where maximum absorbance occurs."
+        "Use this tool to find the wavelength where maximum absorbance occurs. It takes no path arguments to run."
     )
 
     def _find_image_url(self, molecule: str):
