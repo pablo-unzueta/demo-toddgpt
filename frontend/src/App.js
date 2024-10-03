@@ -21,16 +21,10 @@ function App() {
     setUserInput('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/query', { query: userInput });
-      const { response: textResponse, html } = response.data;
+      const response = await axios.post('http://127.0.0.1:8000/api/query', { text: userInput });
+      const botResponse = response.data.response;
       
-      const updatedMessages = [...newMessages, { sender: 'bot', text: textResponse }];
-      
-      if (html) {
-        updatedMessages.push({ sender: 'bot', html: html });
-      }
-      
-      setMessages(updatedMessages);
+      setMessages([...newMessages, { sender: 'bot', text: botResponse }]);
     } catch (error) {
       console.error('Error querying the server:', error);
       setMessages([...newMessages, { sender: 'bot', text: 'An error occurred.' }]);
@@ -76,5 +70,4 @@ function App() {
 }
 
 export default App;
-
 // CSS (App.css)

@@ -100,3 +100,33 @@
   margin-top: 5px;
   overflow-x: auto;
 }
+
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.response {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}

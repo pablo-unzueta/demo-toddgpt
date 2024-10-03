@@ -3,6 +3,7 @@ from src.toddgpt.core import Agent
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from src.toddgpt.core import ToddGPT
 
 
 def main():
@@ -18,7 +19,13 @@ def main():
     executor = agent.get_executor()
 
     while True:
-        conversation = input("Please enter your question (or 'exit' to quit): ")
+        # Get the question from the user
+        # conversation = input("Please enter your question (or 'exit' to quit): ")
+        # conversation = "Can you help me run a terachem tddft_single_point job on ethylene? "
+        # conversation = "What are the major geometric changes after optimizing water? "
+        # conversation = "What are the major geometric changes after optimizing glucose? Write the results to a file."
+        # conversation = "Can you optimize cyclobutanone with terachem?"
+        conversation = "Can you generate a UV-Vis spectrum for cyclobutanone? Compare it to the experimental spectra."
 
         if conversation.lower() == "exit":
             print("Exiting ToddGPT. Goodbye!")
@@ -58,6 +65,10 @@ def main():
         print("Agent's response:")
         print(result["output"])
         print("\n")  # Add a newline for better readability between interactions
+        conversation = input("Please enter your question (or 'exit' to quit): ")
+        if conversation.lower() == "exit":
+            print("Exiting ToddGPT. Goodbye!")
+            break
 
 
 if __name__ == "__main__":
@@ -75,18 +86,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class Query(BaseModel):
     text: str
 
-
 @app.post("/api/query")
 async def query_agent(query: Query):
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables.")
-    
-    agent = Agent("openai", api_key)
-    executor = agent.get_executor()
-    result = executor.invoke({"conversation": query.text})
-    return {"response": result["output"]}
+    agent = ToddGPT()
+    response = agent.run(query.text)
+    return {"response": response}
