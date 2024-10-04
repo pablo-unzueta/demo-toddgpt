@@ -86,7 +86,7 @@ async def query(query: Query):
 
             # Replace image paths with base64 data in the response
             # Resize the image before converting to base64
-            def resize_image(image_path, max_size=(800, 800)):
+            def resize_image(image_path, max_size=(600, 600)):
                 with Image.open(image_path) as img:
                     img.thumbnail(max_size, Image.LANCZOS)
                     resized_path = f"{os.path.splitext(image_path)[0]}_resized.png"
