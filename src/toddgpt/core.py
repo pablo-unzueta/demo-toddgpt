@@ -18,6 +18,7 @@ from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 import json
 import base64
+import os
 
 class Agent:
     def __init__(

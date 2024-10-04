@@ -32,10 +32,7 @@ Image Handling Instructions:
    - Search for images in the './public/spectra' folder
    - Use GrabImagePath on found images in this folder
 
-3. Always include the image path in your response using the format:
-   &lt;img src="path/to/image.base64" alt="Generated Image"&gt;
-
-When referencing images, use the following syntax:
+3. When referencing images, use the following syntax:
 <img src="./public/spectra/filename.extension" alt="Description of the image">
 
 Rules:

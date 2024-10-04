@@ -12,6 +12,7 @@ function App() {
   const [isThinking, setIsThinking] = useState(false);
   const [conversation, setConversation] = useState([]);
   const chatContainerRef = useRef(null);
+  const [imagePaths, setImagePaths] = useState([]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -71,6 +72,43 @@ function App() {
     return [response, ''];
   };
 
+  const handleServerResponse = (data) => {
+    setMessages(prevMessages => [...prevMessages, { text: data.text, sender: 'bot' }]);
+    if (data.image_path) {
+      fetchAndRenderImage(data.image_path);
+    }
+  };
+
+  const fetchAndRenderImage = async (path) => {
+    try {
+      // Use the path directly, as it's already relative to the public directory
+      const response = await fetch(`/${path}`);
+      const blob = await response.blob();
+      const base64data = await blobToBase64(blob);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { image: base64data, sender: 'bot' }
+      ]);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  };
+
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  useEffect(() => {
+    imagePaths.forEach(path => {
+      fetchAndRenderImage(path);
+    });
+  }, [imagePaths]);
+
   const renderMessage = (message) => {
     if (message.text) {
       return (
@@ -84,6 +122,12 @@ function App() {
       return (
         <div className={`chat-message ${message.sender}`}>
           <div className="message-html" dangerouslySetInnerHTML={{ __html: message.html }} />
+        </div>
+      );
+    } else if (message.image) {
+      return (
+        <div className={`chat-message ${message.sender}`}>
+          <img src={message.image} alt="Generated content" />
         </div>
       );
     }

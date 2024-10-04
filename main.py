@@ -6,6 +6,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
+import base64
+import re
+from PIL import Image
 
 load_dotenv()
 
@@ -52,6 +55,43 @@ async def query(query: Query):
         full_query = f"{conversation_history}\nHuman: {query.text}"
 
         response = executor.invoke({"conversation": full_query})
+
+        # Check if the response contains an image reference
+        def check_image_in_response(response):
+            return 'img src="' in response
+
+        has_image = check_image_in_response(response["output"])
+        if has_image:
+            # Function to convert image path to base64
+            def get_base64_image(image_path):
+                with open(image_path, "rb") as image_file:
+                    return base64.b64encode(image_file.read()).decode("utf-8")
+
+            # Function to replace image path with base64 data
+            def replace_image_path_with_base64(response, image_processor):
+                img_tag_pattern = r'<img\s+src="([^"]+)"'
+                matches = re.findall(img_tag_pattern, response)
+
+                for match in matches:
+                    img_str = get_base64_image(image_processor(match))
+                    base64_src = f"data:image/png;base64,{img_str}"
+                    response = response.replace(f'src="{match}"', f'src="{base64_src}"')
+
+                return response
+
+            # Replace image paths with base64 data in the response
+            # Resize the image before converting to base64
+            def resize_image(image_path, max_size=(400, 400)):
+                with Image.open(image_path) as img:
+                    img.thumbnail(max_size)
+                    resized_path = f"{os.path.splitext(image_path)[0]}_resized.png"
+                    img.save(resized_path, "PNG")
+                return resized_path
+
+            response["output"] = replace_image_path_with_base64(
+                response["output"], image_processor=resize_image
+            )
+
         return {"response": response["output"]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
