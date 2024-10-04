@@ -49,8 +49,8 @@
 
 .chat-message {
   display: flex;
-  margin: 6px 0; /* Reduced from 8px */
-  max-width: 80%; /* Increased max-width of messages */
+  margin: 8px 0; /* Increased vertical margin between messages */
+  max-width: 80%;
 }
 
 .chat-message.user {
@@ -64,9 +64,9 @@
 }
 
 .message-text {
-  padding: 6px 10px; /* Reduced from 8px 12px */
-  border-radius: 16px; /* Reduced from 18px */
-  font-size: 16px; /* Reduced from 18px */
+  padding: 8px 12px; /* Increased padding on all sides */
+  border-radius: 16px;
+  font-size: 16px;
   max-width: 100%;
   word-wrap: break-word;
 }
@@ -191,4 +191,21 @@ button {
 
 .message.assistant code {
   font-family: 'Courier New', Courier, monospace;
+}
+
+.message.assistant.thinking {
+  font-style: italic;
+  color: #888;
+}
+
+.message-text.thinking {
+  font-style: italic;
+  color: #888;
+  background-color: transparent;
+  padding: 6px 10px;
+}
+
+/* Remove any bottom margin from the last paragraph in a message */
+.message-text p:last-child {
+  margin-bottom: 0;
 }

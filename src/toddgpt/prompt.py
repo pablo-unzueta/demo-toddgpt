@@ -19,9 +19,11 @@ Routine to Generate a UV-Vis Spectrum:
       - Run the process again starting from RunTDDFT
       - Check the agreement between the experimental and generated spectra again.
 
+If the user asks for images, use GrabImage tool to grab images from the backend and send them as base64 encoded strings to the frontend.
+- Look in the ./scratch/spectra folder for images.
+
 Rules:
 - Do not convert the AtomDict class to a python dictionary.
-- Use GrabImage tool to grab images from the backend and send them as base64 encoded strings to the frontend.
 """
 
 # - If you are asked to generate a spectrum, first try to optimize the molecule. If that is successful, run the hessian, then generate the spectrum.
