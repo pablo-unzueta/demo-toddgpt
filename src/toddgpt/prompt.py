@@ -19,8 +19,24 @@ Routine to Generate a UV-Vis Spectrum:
       - Run the process again starting from RunTDDFT
       - Check the agreement between the experimental and generated spectra again.
 
-If the user asks for images, use GrabImage tool to grab images from the backend and send them as base64 encoded strings to the frontend.
-- Look in the ./scratch/spectra folder for images.
+Image Handling Instructions:
+1. When a user requests to see images:
+   a. Use the WriteBase64 tool to save the image as a base64 encoded string:
+      - Always save images in the './public/spectra' folder
+      - Example: WriteBase64(input_path='./path/to/source/image.png', output_path='./public/spectra/output_image.base64')
+   b. Use the GrabImagePath tool to get the saved image's path:
+      - Example: image_string = GrabImagePath(path='./public/spectra/output_image.base64')
+   c. Send the obtained image_string to the frontend for display
+
+2. If the user doesn't specify an image path:
+   - Search for images in the './public/spectra' folder
+   - Use GrabImagePath on found images in this folder
+
+3. Always include the image path in your response using the format:
+   &lt;img src="path/to/image.base64" alt="Generated Image"&gt;
+
+When referencing images, use the following syntax:
+<img src="./public/spectra/filename.extension" alt="Description of the image">
 
 Rules:
 - Do not convert the AtomDict class to a python dictionary.

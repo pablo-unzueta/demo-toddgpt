@@ -1,7 +1,7 @@
 // Frontend: React.js with a ChatGPT-like Interface
 // Create a React project and install axios
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './App.css';  // For styling
@@ -10,6 +10,14 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
+  const [conversation, setConversation] = useState([]);
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (userInput.trim() === '') return;
@@ -20,10 +28,21 @@ function App() {
     setIsThinking(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/query', { text: userInput });
+      const response = await axios.post('http://127.0.0.1:8000/api/query', { 
+        text: userInput,
+        conversation: conversation
+      });
       const botResponse = response.data.response;
       
-      setMessages([...newMessages, { sender: 'bot', text: botResponse }]);
+      const [textPart, htmlPart] = splitResponse(botResponse);
+      
+      setMessages([
+        ...newMessages, 
+        { sender: 'bot', text: textPart },
+        ...(htmlPart ? [{ sender: 'bot', html: htmlPart }] : [])
+      ]);
+
+      setConversation([...conversation, { role: 'human', content: userInput }, { role: 'ai', content: botResponse }]);
     } catch (error) {
       console.error('Error querying the server:', error);
       setMessages([...newMessages, { sender: 'bot', text: 'An error occurred.' }]);
@@ -39,23 +58,48 @@ function App() {
     }
   };
 
+  const splitResponse = (response) => {
+    const imgRegex = /<img[^>]+>/;
+    const match = response.match(imgRegex);
+    
+    if (match) {
+      const textPart = response.slice(0, match.index).trim();
+      const htmlPart = match[0];
+      return [textPart, htmlPart];
+    }
+    
+    return [response, ''];
+  };
+
+  const renderMessage = (message) => {
+    if (message.text) {
+      return (
+        <div className={`chat-message ${message.sender}`}>
+          <div className="message-text">
+            <ReactMarkdown>{message.text}</ReactMarkdown>
+          </div>
+        </div>
+      );
+    } else if (message.html) {
+      return (
+        <div className={`chat-message ${message.sender}`}>
+          <div className="message-html" dangerouslySetInnerHTML={{ __html: message.html }} />
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="App">
       <header className="chat-header">
         <img src={process.env.PUBLIC_URL + '/logo.png'} alt="ToddGPT Logo" className="chat-logo" />
         <h1 className="chat-title">ToddGPT</h1>
       </header>
-      <div className="chat-container">
+      <div className="chat-container" ref={chatContainerRef}>
         {messages.map((message, index) => (
-          <div key={index} className={`chat-message ${message.sender}`}>
-            <div className="message-text">
-              {message.sender === 'user' ? (
-                <p>{message.text}</p>
-              ) : (
-                <ReactMarkdown>{message.text}</ReactMarkdown>
-              )}
-            </div>
-          </div>
+          <React.Fragment key={index}>
+            {renderMessage(message)}
+          </React.Fragment>
         ))}
         {isThinking && <div className="chat-message bot">
           <div className="message-text thinking">Thinking...</div>
