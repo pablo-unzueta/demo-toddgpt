@@ -26,12 +26,12 @@
 }
 
 .chat-logo {
-  height: 35px; /* Reduced from 40px */
+  height: 45px; /* Reduced from 40px */
   margin-right: 10px; /* Reduced from 15px */
 }
 
 .chat-title {
-  font-size: 24px; /* Reduced from 28px */
+  font-size: 28px; /* Reduced from 28px */
   color: #333;
   font-weight: 600;
 }
@@ -130,8 +130,8 @@
   padding: 10px 20px; /* Reduced from 12px 25px */
   border: none;
   border-radius: 18px; /* Reduced from 20px */
-  background-color: #4CAF50; /* Changed color to match the button style */
-  color: white;
+  background-color: #ccebc5; /* Changed color to match the button style */
+  color: black;
   cursor: pointer;
   font-size: 14px; /* Reduced from 16px */
 }
