@@ -1,5 +1,7 @@
 from langchain.agents import AgentExecutor
-from langchain.agents.format_scratchpad.openai_tools import format_to_openai_tool_messages
+from langchain.agents.format_scratchpad.openai_tools import (
+    format_to_openai_tool_messages,
+)
 from langchain.agents.output_parsers.openai_tools import OpenAIToolsAgentOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
@@ -8,7 +10,13 @@ from .prompt import SYSTEM_PROMPT
 from .tools.grab_geom import extract_molecule_from_pubchem, read_geometry_from_file
 from .tools.chemcloud_tool import RunTerachem
 from .tools.mace_calc import MaceCalculator
-from .tools.spectra import GenerateSpectrum, OptimizeMolecule, RunHessian, RunTDDFT, CheckGeneratedSpectra
+from .tools.spectra import (
+    GenerateSpectrum,
+    OptimizeMolecule,
+    RunHessian,
+    RunTDDFT,
+    CheckGeneratedSpectra,
+)
 from .tools.experimental_data import MaxWavelengthTool
 from .tools.update_tc_input import UpdateTcInput
 from .tools.search_lit import SearchLit
@@ -20,13 +28,14 @@ import json
 import base64
 import os
 
+
 class Agent:
     def __init__(
         self,
         api_provider,
         api_key,
         api_url=None,
-        api_model="gpt-4-0125-preview",
+        api_model="gpt-4o",
         api_temperature=0,
     ):
         self.api_provider = api_provider
@@ -37,7 +46,7 @@ class Agent:
 
     def get_executor(self):
         if self.api_provider.lower() == "openai":
-            supported_models = ["gpt-4-0125-preview", "gpt-4-turbo-preview", "gpt-4"]
+            supported_models = ["gpt-4o"]
             if self.api_model not in supported_models:
                 raise ValueError(
                     f"Unsupported OpenAI model: {self.api_model}. Supported models are: {', '.join(supported_models)}"
@@ -76,9 +85,11 @@ class Agent:
         llm_with_tools = llm.bind_tools(tools)
 
         def process_agent_action(action):
-            if isinstance(action, dict) and 'image_data' in action:
-                image_data = action['image_data']
-                if isinstance(image_data, str) and image_data.startswith("__FRONTEND_IMAGE__"):
+            if isinstance(action, dict) and "image_data" in action:
+                image_data = action["image_data"]
+                if isinstance(image_data, str) and image_data.startswith(
+                    "__FRONTEND_IMAGE__"
+                ):
                     return "__IMAGE_PLACEHOLDER__"
                 else:
                     return image_data
