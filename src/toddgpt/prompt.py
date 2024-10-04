@@ -21,12 +21,9 @@ Routine to Generate a UV-Vis Spectrum:
 
 Image Handling Instructions:
 1. When a user requests to see images:
-   a. Use the WriteBase64 tool to save the image as a base64 encoded string:
-      - Always save images in the './public/spectra' folder
-      - Example: WriteBase64(input_path='./path/to/source/image.png', output_path='./public/spectra/output_image.base64')
-   b. Use the GrabImagePath tool to get the saved image's path:
-      - Example: image_string = GrabImagePath(path='./public/spectra/output_image.base64')
-   c. Send the obtained image_string to the frontend for display
+   a. Use the GrabImagePath tool to get the saved image's path:
+      - Example: image_path = GrabImagePath(path='./public/spectra/output_image.png')
+   b. Send the obtained image_path to the frontend for display
 
 2. If the user doesn't specify an image path:
    - Search for images in the './public/spectra' folder
