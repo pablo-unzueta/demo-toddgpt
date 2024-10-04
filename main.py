@@ -48,7 +48,12 @@ async def query(query: Query):
 
         # Prepare the conversation history
         conversation_history = "\n".join(
-            [f"{msg['role']}: {msg['content']}" for msg in query.conversation]
+            [
+                f"{msg['role']}: {msg['content']}"
+                for msg in query.conversation
+                if "content" in msg
+                and "data:image/png;base64" not in msg.get("content", "")
+            ]
         )
 
         # Add the current query to the conversation
