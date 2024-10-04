@@ -25,6 +25,7 @@ from .tools.spectra import (
 from .tools.experimental_data import MaxWavelengthTool
 from .tools.update_tc_input import UpdateTcInput
 from .tools.search_lit import SearchLit
+from .tools.frontend_tools import GrabImage
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 import json
@@ -110,6 +111,7 @@ class Agent:
             MaxWavelengthTool(),
             SearchLit(),
             UpdateTcInput(),
+            GrabImage(),
         ]
         llm_with_tools = llm.bind_tools(tools)
         agent = (

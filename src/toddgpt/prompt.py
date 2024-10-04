@@ -21,6 +21,7 @@ Routine to Generate a UV-Vis Spectrum:
 
 Rules:
 - Do not convert the AtomDict class to a python dictionary.
+- Use GrabImage tool to grab images from the backend and send them as base64 encoded strings to the frontend.
 """
 
 # - If you are asked to generate a spectrum, first try to optimize the molecule. If that is successful, run the hessian, then generate the spectrum.
