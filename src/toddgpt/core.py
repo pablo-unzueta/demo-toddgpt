@@ -24,9 +24,28 @@ from .tools.frontend_tools import GrabImage
 
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
+import openai
 import json
 import base64
 import os
+import time
+import random
+
+
+def call_openai_with_retry(func, *args, **kwargs):
+    max_retries = 5
+    base_delay = 1
+
+    for attempt in range(max_retries):
+        try:
+            return func(*args, **kwargs)
+        except openai.RateLimitError as e:
+            if attempt == max_retries - 1:
+                raise
+
+            delay = (2**attempt) + random.random()
+            print(f"Rate limit hit. Retrying in {delay:.2f} seconds...")
+            time.sleep(delay)
 
 
 class Agent:
@@ -46,7 +65,7 @@ class Agent:
 
     def get_executor(self):
         if self.api_provider.lower() == "openai":
-            supported_models = ["gpt-4o"]
+            supported_models = ["gpt-4o-mini", "gpt-4o"]
             if self.api_model not in supported_models:
                 raise ValueError(
                     f"Unsupported OpenAI model: {self.api_model}. Supported models are: {', '.join(supported_models)}"
