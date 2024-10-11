@@ -6,6 +6,43 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './App.css';  // For styling
 
+const Message = ({ message, index }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div key={index} className={`message-container ${message.sender}`}>
+      {message.sender === 'bot' && message.responseTime && (
+        <div className="response-time">Response time: {message.responseTime}ms</div>
+      )}
+      <div className="message-wrapper">
+        <div className={`chat-message ${message.sender}`}>
+          {message.text && (
+            <div className="message-text">
+              <ReactMarkdown>{message.text}</ReactMarkdown>
+            </div>
+          )}
+          {message.html && (
+            <div className="message-html" dangerouslySetInnerHTML={{ __html: message.html }} />
+          )}
+          {message.image && (
+            <img src={message.image} alt="Generated content" />
+          )}
+        </div>
+        {message.sender === 'bot' && (
+          <button className="expand-button" onClick={() => setExpanded(!expanded)}>
+            {expanded ? '▲' : '▼'}
+          </button>
+        )}
+      </div>
+      {message.sender === 'bot' && expanded && message.logging && (
+        <div className="message-logging">
+          <pre>{message.logging}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -13,6 +50,7 @@ function App() {
   const [conversation, setConversation] = useState([]);
   const chatContainerRef = useRef(null);
   const [imagePaths, setImagePaths] = useState([]);
+  const [responseTimes, setResponseTimes] = useState({});
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -29,20 +67,26 @@ function App() {
     setIsThinking(true);
 
     try {
+      const startTime = Date.now();
       const response = await axios.post('http://127.0.0.1:8000/api/query', { 
         text: userInput,
         conversation: conversation
       });
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+
       const botResponse = response.data.response;
+      const logging = response.data.logging;
       
       const [textPart, htmlPart] = splitResponse(botResponse);
       
-      setMessages([
+      const newMessagesWithResponseTime = [
         ...newMessages, 
-        { sender: 'bot', text: textPart },
-        ...(htmlPart ? [{ sender: 'bot', html: htmlPart }] : [])
-      ]);
+        { sender: 'bot', text: textPart, responseTime, logging },
+        ...(htmlPart ? [{ sender: 'bot', html: htmlPart, responseTime, logging }] : [])
+      ];
 
+      setMessages(newMessagesWithResponseTime);
       setConversation([...conversation, { role: 'human', content: userInput }, { role: 'ai', content: botResponse }]);
     } catch (error) {
       console.error('Error querying the server:', error);
@@ -109,28 +153,8 @@ function App() {
     });
   }, [imagePaths]);
 
-  const renderMessage = (message) => {
-    if (message.text) {
-      return (
-        <div className={`chat-message ${message.sender}`}>
-          <div className="message-text">
-            <ReactMarkdown>{message.text}</ReactMarkdown>
-          </div>
-        </div>
-      );
-    } else if (message.html) {
-      return (
-        <div className={`chat-message ${message.sender}`}>
-          <div className="message-html" dangerouslySetInnerHTML={{ __html: message.html }} />
-        </div>
-      );
-    } else if (message.image) {
-      return (
-        <div className={`chat-message ${message.sender}`}>
-          <img src={message.image} alt="Generated content" />
-        </div>
-      );
-    }
+  const renderMessage = (message, index) => {
+    return <Message message={message} index={index} />;
   };
 
   return (
@@ -140,14 +164,14 @@ function App() {
         <h1 className="chat-title">ToddGPT</h1>
       </header>
       <div className="chat-container" ref={chatContainerRef}>
-        {messages.map((message, index) => (
-          <React.Fragment key={index}>
-            {renderMessage(message)}
-          </React.Fragment>
-        ))}
-        {isThinking && <div className="chat-message bot">
-          <div className="message-text thinking">Thinking...</div>
-        </div>}
+        {messages.map((message, index) => renderMessage(message, index))}
+        {isThinking && (
+          <div className="message-container bot">
+            <div className="chat-message bot thinking">
+              <div className="message-text thinking">Thinking...</div>
+            </div>
+          </div>
+        )}
       </div>
       <div className="input-container">
         <input

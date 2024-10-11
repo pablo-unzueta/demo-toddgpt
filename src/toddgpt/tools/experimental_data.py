@@ -17,14 +17,17 @@ def encode_image(image_path):
 
 
 class WavelengthResponse(BaseModel):
-    wavelength: float
+    wavelength: int
+
+
+class WavelengthResponseWithSource(BaseModel):
+    wavelength: int
+    source: str
 
 
 class MaxWavelengthTool(BaseTool):
     name: str = "max_wavelength_tool"
-    description: str = (
-        "Use this tool to find the wavelength where maximum absorbance occurs. It takes no path arguments to run."
-    )
+    description: str = "Use this tool to find the wavelength where maximum absorbance occurs. It takes no path arguments to run."
 
     def _find_image_url(self, molecule: str):
         links = {
@@ -59,7 +62,7 @@ class MaxWavelengthTool(BaseTool):
             response_format=WavelengthResponse,
             temperature=0.0,
         )
-        return response.choices[0]
+        return response.choices[0].message.content, image_url
 
 
 # Define a custom tool for image processing

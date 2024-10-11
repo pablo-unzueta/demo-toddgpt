@@ -98,11 +98,7 @@ class RunTerachem(BaseTool):
         if self._chemcloud_client is None:
             self._chemcloud_client = self.initialize_chemcloud_client()
 
-        if tc_input:
-            # Use FileInput if tc_input is provided
-            input_obj = self.setup_file_qcio(tc_input, atoms_dict)
-        else:
-            raise ValueError("Non file based input not supported at this time.")
+        input_obj = self.setup_file_qcio(tc_input, atoms_dict)
 
         future_result = self._chemcloud_client.compute(
             "terachem",

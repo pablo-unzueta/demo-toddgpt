@@ -415,7 +415,7 @@ def run_wigner(
     temp: float = 0.0,
     wigner: bool = True,
     wigner_dir: Path = Path("./wigner"),
-    wigner_N: int = 5,
+    wigner_N: int = 1,
     atomic_symbols: List[str] = None,
     alternate_masses: List[str] = None,
 ):

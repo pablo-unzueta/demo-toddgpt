@@ -21,7 +21,7 @@
   width: 90%;
   max-width: 1400px;
   margin: 5px auto; /* Reduced from 10px */
-  padding: 0 20px;
+  padding: 0 0px;
   box-sizing: border-box;
 }
 
@@ -48,8 +48,10 @@
 }
 
 .chat-message {
+  position: relative;
   display: flex;
-  margin: 8px 0; /* Increased vertical margin between messages */
+  flex-direction: column;
+  margin: 8px 0;
   max-width: 80%;
 }
 
@@ -64,7 +66,7 @@
 }
 
 .message-text {
-  padding: 8px 12px; /* Increased padding on all sides */
+  padding: 6px 10px; /* Reduced padding from 8px 12px */
   border-radius: 16px;
   font-size: 16px;
   max-width: 100%;
@@ -74,7 +76,7 @@
 .chat-message.user .message-text {
   background-color: #ccebc5;
   color: black;
-  text-align: right;
+  text-align: left;
 }
 
 .chat-message.bot .message-text {
@@ -137,7 +139,7 @@
 }
 
 .send-button:hover {
-  background-color: #45a049; /* Darker shade for hover effect */
+  background-color: #a8ddb5; /* Darker shade for hover effect */
 }
 
 .message-html {
@@ -201,11 +203,115 @@ button {
 .message-text.thinking {
   font-style: italic;
   color: #888;
-  background-color: transparent;
+  background-color: #f0f0f0;
   padding: 6px 10px;
+  border-radius: 16px;
+  display: inline-block;
+  max-width: 100px;  /* Limit the width of the thinking bubble */
+}
+
+/* Add this new style for the thinking message container */
+.chat-message.bot.thinking {
+  width: auto;
+  max-width: none;
 }
 
 /* Remove any bottom margin from the last paragraph in a message */
 .message-text p:last-child {
   margin-bottom: 0;
 }
+
+.response-container {
+  position: relative;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logs-container {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.response-time {
+  font-size: 0.8em;
+  color: #888;
+  text-align: left;
+  margin-bottom: 2px;
+  margin-left: 10px;
+}
+
+.message {
+  position: relative;
+  /* ... existing styles */
+}
+
+.expand-button {
+  position: absolute;
+  right: 0; /* Position it to the right of the message */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  padding: 5px;
+  z-index: 1;
+}
+
+.message-logging {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  align-self: stretch;
+  margin-right: 25px; /* Add space for the arrow */
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  max-width: 80%;
+}
+
+.message-container.user {
+  align-items: flex-end;
+  margin-left: auto;
+}
+
+.message-container.bot {
+  align-items: flex-start;
+  margin-right: auto;
+}
+
+.message-wrapper {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.chat-message {
+  display: inline-block;
+  padding: 6px 10px; /* Reduced padding from 8px 12px */
+  border-radius: 16px;
+  font-size: 16px;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.chat-message.bot {
+  background-color: #dddddd;
+  color: black;
+  margin-right: 25px; /* Add space for the arrow */
+}
+
+/* Remove any conflicting styles */

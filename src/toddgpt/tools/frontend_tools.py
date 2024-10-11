@@ -3,8 +3,10 @@ from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 from typing import Type
 
+
 class GrabImageInput(BaseModel):
     path: str = Field(..., description="Path to the image file")
+
 
 class GrabImage(BaseTool):
     name: str = "GrabImage"
@@ -16,8 +18,10 @@ class GrabImage(BaseTool):
             return path
 
         # Adjust the path to point to the root public directory
-        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-        public_dir = os.path.join(root_dir, 'public')
+        root_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..")
+        )
+        public_dir = os.path.join(root_dir, "public")
 
         if not path.startswith(public_dir):
             # If not, save the image to the public directory
@@ -25,7 +29,7 @@ class GrabImage(BaseTool):
                 image_data = image_file.read()
 
             # Generate a unique filename
-            filename = f"generated_image_{os.path.basename(path)}"
+            filename = f"{os.path.basename(path)}"
             new_path = os.path.join(public_dir, filename)
 
             with open(new_path, "wb") as new_file:
@@ -39,6 +43,7 @@ class GrabImage(BaseTool):
     async def _arun(self, path: str) -> str:
         # Implement async version if needed
         return self._run(path)
+
 
 if __name__ == "__main__":
     tool = GrabImage()

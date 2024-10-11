@@ -1,8 +1,13 @@
+import nest_asyncio
+
 from paperqa import Settings, ask
 from langchain_core.tools import BaseTool
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from pydantic import BaseModel
 from typing import Type
+
+
+nest_asyncio.apply()
 
 
 class SearchLitInput(BaseModel):
@@ -35,9 +40,7 @@ class SearchLit(BaseTool):
 if __name__ == "__main__":
     search_lit = SearchLit()
     print(
-        search_lit.run(
-            temperature=0.0,
-            paper_directory="/Users/pablo/software/demo-toddgpt/assets/papers",
+        search_lit._run(
             text="What basis set should I use for valence states?",
         )
     )

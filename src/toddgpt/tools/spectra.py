@@ -25,11 +25,11 @@ class OptimizeMoleculeInput(BaseModel):
 
 class OptimizeMolecule(BaseTool):
     name: str = "optimize_molecule_for_spectrum"
-    description: str = "This is the first tool you should use to optimize the geometry of a molecule to generate a UV-Visspectrum."
+    description: str = "This is the first tool you should use to optimize the geometry of a molecule to generate a UV-Vis spectrum."
     args_schema: Type[BaseModel] = OptimizeMoleculeInput
 
     def _run(self, atoms_dict: AtomsDict):
-        output_opt_dir = Path("./scratch/minimize")
+        output_opt_dir = Path("./public/scratch/minimize")
         output_opt_dir.mkdir(parents=True, exist_ok=True)
         logging.info("Directory for optimization created at %s", output_opt_dir)
 
@@ -61,7 +61,7 @@ class RunHessian(BaseTool):
     args_schema: Type[BaseModel] = RunHessianInput
 
     def _run(self, atoms_dict: AtomsDict):
-        output_hessian_dir = Path("./scratch/initcond")
+        output_hessian_dir = Path("./public/scratch/initcond")
         output_hessian_dir.mkdir(parents=True, exist_ok=True)
         logging.info(f"Directory for Hessian created at {output_hessian_dir}")
 
@@ -76,7 +76,7 @@ class RunHessian(BaseTool):
         prog_output.results.save_files(output_hessian_dir)
         logging.info(f"Results saved to {output_hessian_dir}")
 
-        output_wigner_dir = Path("./scratch/wigner")
+        output_wigner_dir = Path("./public/scratch/wigner")
         output_wigner_dir.mkdir(parents=True, exist_ok=True)
         logging.info(f"Directory for Wigner created at {output_wigner_dir}")
         logging.info("Running Wigner")
@@ -100,8 +100,8 @@ class RunTDDFT(BaseTool):
     args_schema: Type[BaseModel] = RunTDDFTInput
 
     def _run(self, atoms_dict: AtomsDict, method: str):
-        output_wigner_dir = Path("./scratch/wigner")
-        output_td_dir = Path(f"./scratch/{method}")
+        output_wigner_dir = Path("./public/scratch/wigner")
+        output_td_dir = Path(f"./public/scratch/{method}")
         output_td_dir.mkdir(parents=True, exist_ok=True)
         logging.info(f"Directory for TDDFT created at {output_td_dir}")
 
@@ -135,17 +135,19 @@ class GenerateSpectrum(BaseTool):
 
     def _run(self, method: str):
         logging.info(f"Generating spectrum for {method}")
-        logging.info(f"Reading files from ./scratch/{method}")
-        logging.info(f"Writing output to ./scratch/spectra/{method}.png")
+        logging.info(f"Reading files from ./public/scratch/{method}")
+        logging.info(f"Writing output to ./public/scratch/spectra/{method}.png")
         self.plot_spectra(method)
-        return f"Generated spectra can be viewed at ./scratch/spectra/{method}.png"
+        return (
+            f"Generated spectra can be viewed at ./public/scratch/spectra/{method}.png"
+        )
 
     def plot_spectra(self, method: str):
         logging.info(f"Plotting spectrum for {method}")
-        spectra_dir = Path("./scratch/spectra")
+        spectra_dir = Path("./public/scratch/spectra")
         spectra_dir.mkdir(parents=True, exist_ok=True)
         uv_vis_data = []
-        for file in Path(f"./scratch/{method}").glob("*.out"):
+        for file in Path(f"./public/scratch/{method}").glob("*.out"):
             if method == "hhtda":
                 data = get_uv_vis_data_hhtda(file)
             elif method == "wpbe":
@@ -169,16 +171,17 @@ class GenerateSpectrum(BaseTool):
         output = np.zeros(len(grid))
         for i, en in enumerate(energy):
             gauss = self.gaussian(
-                grid, 1240 / en, 5
+                grid, 1239.841 / en, 30
             )  # Use wavelength instead of energy
             output += gauss * osc_strength[i]
 
         plt.plot(grid, output, linewidth=3, label=plot_label)
         plt.xlabel("Wavelength (nm)")
-        plt.ylabel("Intensity")
+        plt.ylabel("Intensity (a.u.)")
+        plt.yticks([])
         plt.title(f"UV-Vis Spectrum - {plot_label}")
         plt.legend()
-        plt.savefig(f"./scratch/spectra/{plot_label}.png")
+        plt.savefig(f"./public/scratch/spectra/{plot_label}.png")
         plt.close()
 
 

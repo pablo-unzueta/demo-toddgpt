@@ -6,6 +6,7 @@
 # agent_scratch/
 test_run_chemcloud.py
 test_geom.xyz
+kill_8000.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
